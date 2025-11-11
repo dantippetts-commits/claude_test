@@ -9,7 +9,8 @@ A simple and elegant web-based to-do list application built with Python Flask an
 - **Edit Tasks**: Update task text inline
 - **Delete Tasks**: Remove tasks you no longer need
 - **Filter View**: View all, active, or completed tasks
-- **Persistent Storage**: Tasks are saved in an SQLite database
+- **Persistent Storage**: Tasks are saved in Supabase (PostgreSQL) or SQLite database
+- **Flexible Database**: Works with Supabase for production or SQLite for local development
 
 ## Installation
 
@@ -19,6 +20,25 @@ A simple and elegant web-based to-do list application built with Python Flask an
 ```bash
 pip install -r requirements.txt
 ```
+
+## Database Setup
+
+This app supports two database options:
+
+### Option 1: Supabase (Recommended for Production)
+
+For persistent, production-ready storage:
+
+1. Follow the [SUPABASE_SETUP.md](SUPABASE_SETUP.md) guide to create your Supabase project
+2. Copy `.env.example` to `.env` and add your Supabase credentials
+3. Run the app - it will automatically use Supabase!
+
+### Option 2: SQLite (Quick Start / Local Development)
+
+For quick local testing:
+
+1. Just run the app - SQLite will be used automatically if Supabase isn't configured
+2. Data is stored locally in `todo.db`
 
 ## Running Locally
 
@@ -67,30 +87,35 @@ git push -u origin main
 
 ### Important Notes for Vercel Deployment
 
-- **Data Persistence**: On Vercel, the SQLite database is stored in `/tmp` which is ephemeral. This means:
-  - Data will be lost when the serverless function restarts
-  - For production use, consider using a persistent database like:
-    - [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
-    - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-    - [PlanetScale](https://planetscale.com/)
-    - Any other cloud database service
+- **Database Recommendation**: Use Supabase for production deployments on Vercel
+  - SQLite on Vercel is ephemeral (data resets on function restart)
+  - Supabase provides persistent PostgreSQL storage
+  - Follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to set up Supabase
 
-- **Environment Variables**: Can be configured in Vercel Dashboard → Project Settings → Environment Variables
+- **Environment Variables**:
+  - Add your Supabase credentials in Vercel Dashboard → Project Settings → Environment Variables:
+    - `SUPABASE_URL`: Your Supabase project URL
+    - `SUPABASE_KEY`: Your Supabase anon/public key
 
 ## Project Structure
 
 ```
 todo-app/
-├── app.py              # Flask backend with API endpoints
-├── vercel.json         # Vercel deployment configuration
-├── requirements.txt    # Python dependencies
-├── .gitignore          # Git ignore rules
-├── todo.db             # SQLite database (created automatically, local only)
+├── app.py                 # Flask backend with API endpoints
+├── config.py              # Configuration (Supabase/SQLite)
+├── vercel.json            # Vercel deployment configuration
+├── requirements.txt       # Python dependencies
+├── .env.example           # Example environment variables
+├── .gitignore             # Git ignore rules
+├── README.md              # Main documentation
+├── SUPABASE_SETUP.md      # Supabase setup guide
+├── DEPLOY.md              # Deployment guide
+├── todo.db                # SQLite database (local fallback)
 ├── templates/
-│   └── index.html      # Main HTML page
+│   └── index.html         # Main HTML page
 └── static/
-    ├── style.css       # Styling
-    └── script.js       # Frontend JavaScript
+    ├── style.css          # Styling
+    └── script.js          # Frontend JavaScript
 ```
 
 ## API Endpoints
@@ -111,8 +136,9 @@ todo-app/
 ## Technologies Used
 
 - **Backend**: Python Flask
-- **Database**: SQLite
+- **Database**: Supabase (PostgreSQL) or SQLite
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Deployment**: Vercel-ready
 - **No external frontend frameworks** - keeping it simple!
 
 ## License
